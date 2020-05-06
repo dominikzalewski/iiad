@@ -6,8 +6,8 @@ services:
       replicas: 1
       resources:
         limits:
-          memory: 50MB
-    image: registry:2.7.1
+          memory: $MEMORY
+    image: ${REGISTRY}registry:${VERSION}
     environment:
       "REGISTRY_AUTH": htpasswd
       "REGISTRY_AUTH_HTPASSWD_REALM": Registry
@@ -25,7 +25,7 @@ services:
     volumes:
       - data:/data
     ports:
-      - published: 443
+      - published: $PORT
         target: 5000
 
 volumes:
@@ -37,11 +37,11 @@ configs:
     name: empty-${empty_DIGEST}
 secrets:
   passwd:
-    file: ${WORKSPACE}/secrets-prod/${ENV}/${MICROSERVICE}/passwd
+    file: ${WORKSPACE}/secrets/${ENV}/${MICROSERVICE}/passwd
     name: passwd-${passwd_DIGEST}
   fullchain:
-    file: ${WORKSPACE}/secrets-prod/defaults/fullchain1.pem
+    file: ${WORKSPACE}/secrets/defaults/fullchain1.pem
     name: fullchain-${fullchain_DIGEST}
   privkey:
-    file: ${WORKSPACE}/secrets-prod/defaults/privkey1.pem
+    file: ${WORKSPACE}/secrets/defaults/privkey1.pem
     name: privkey-${privkey_DIGEST}

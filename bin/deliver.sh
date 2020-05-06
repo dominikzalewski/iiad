@@ -13,7 +13,7 @@ function show_help() {
 }
 
 function parse_opts() {
-	while getopts "x:c:m:e:w:t:" opt
+	while getopts "x:c:m:e:w:t:v:r:" opt
 	do
 		case "$opt" in
 		c)  COMPOSE=$OPTARG
@@ -28,8 +28,12 @@ function parse_opts() {
 			;;
 		t)  TEMPLATE=$OPTARG
 			;;
+		v)  VERSION=$OPTARG
+			;;
+		r)  REGISTRY=$OPTARG
+			;;
 		*)
-			echo "usage ./deliver.sh -xcmewt" >&2
+			echo "usage ./deliver.sh -xcmewtv" >&2
 			exit 1
 			;;
 		esac
@@ -40,17 +44,22 @@ function defaults() {
 	[ -z "$MICROSERVICE" ] && die "MICROSERVICE parameter is required"
 	[ -z "$ENV" ] && die "ENV parameter is required"
 	[ -z "$WORKSPACE" ] && WORKSPACE=../..
-	[ -z "$COMPOSE" ] && COMPOSE="$WORKSPACE/docker/$MICROSERVICE/docker-compose.yml"
+	[ -z "$COMPOSE" ] && COMPOSE="$WORKSPACE/iiad/$MICROSERVICE/docker-compose.yml"
 	[ -z "$TEMPLATE" ] && TEMPLATE="$MICROSERVICE"
 	[ -z "$CONTEXT" ] && CONTEXT=default
 }
 
 parse_opts "$@"
 defaults
+source "$WORKSPACE/context/$MICROSERVICE.$ENV"
 
 export MICROSERVICE
 export ENV
 export WORKSPACE
+export MEMORY
+export VERSION
+export REGISTRY
+export PORT
 
 CONFIG=$(mktemp)
 config_fingerprint "$COMPOSE" "$MICROSERVICE" "$ENV" "$TEMPLATE" "$WORKSPACE" > "$CONFIG"
@@ -58,4 +67,4 @@ config_fingerprint "$COMPOSE" "$MICROSERVICE" "$ENV" "$TEMPLATE" "$WORKSPACE" > 
 source "$CONFIG"
 rm "$CONFIG"
 
-docker --context "$CONTEXT" stack deploy -c "$COMPOSE" "$MICROSERVICE"
+docker --context "$CONTEXT" stack deploy -c "$COMPOSE" "${MICROSERVICE}-${ENV}"
