@@ -1,0 +1,4 @@
+export cert_com_DIGEST="3b66ec9113a1d16b4595fc4bb5bf55347d47ffae8cd8fcbbaba72c59ed7"
+export file1_DIGEST="e16b4d3bc1911dfaacba6dcdf71ea4f6cb3672764a9ff372669b4cc90c"
+export file2_DIGEST="32f76d5c9f05c5822e2031cef3fb000f34a376680940e9353ebba2d07f"
+export localtime_DIGEST="bbdbf3f6ee8b1faef26493d5abde41536e78470c3a4980c460d95e"

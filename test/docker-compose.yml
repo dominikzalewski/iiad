@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  server:
+    deploy:
+      replicas: 1
+    image: docker/foo:1.0
+    configs:
+      - source: localtime
+        target: /etc/localtime
+      - source: file1
+        target: /file1
+      - source: file2
+        target: /file2
+    secrets:
+      - source: cert
+        target: /certs/wildcard.crt
+
+configs:
+  localtime:
+    file: ${WORKSPACE}/configs/localtime
+    name: localtime-${localtime_DIGEST}
+  file1:
+    file: ${WORKSPACE}/configs/${ENV}/file1
+    name: file1-${file1_DIGEST}
+  file2:
+    file: ${WORKSPACE}/configs/${MICROSERVICE}/file2
+    name: file2-${file2_DIGEST}
+secrets:
+  cert_com:
+    file: ${WORKSPACE}/secrets-prod/certs/wildcard.crt
+    name: cert-${cert_DIGEST}
