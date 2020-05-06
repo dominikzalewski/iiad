@@ -15,7 +15,7 @@ function config_fingerprint() {
 	while read -r entry; read -r name; read -r file
 	do
 		# shellcheck disable=SC2016
-		interpolated=$(echo "$file" | envsubst '${ENV}${MICROSERVICE}${WORKSPACE}')
+		interpolated=$(echo "$file" | envsubst '${ENV}${MICROSERVICE}${WORKSPACE}${TEMPLATE}')
 		# shellcheck disable=SC2001
 		name_without_references="$(echo "$name"| sed s/\$.*//)"
 		remainder=$(( 64 - ${#name_without_references} ))

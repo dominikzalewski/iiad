@@ -16,6 +16,7 @@ function setup() {
 	echo "john" > $WORKSPACE/configs/localtime
 	echo "amy" > $WORKSPACE/configs/${ENV}/file1
 	echo "jelly" > $WORKSPACE/configs/${MICROSERVICE}/file2
+	echo "belly" > $WORKSPACE/configs/${TEMPLATE}/file3
 }
 
 function teardown() {

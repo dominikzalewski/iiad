@@ -12,6 +12,8 @@ services:
         target: /file1
       - source: file2
         target: /file2
+      - source: file3
+        target: /file3
     secrets:
       - source: cert
         target: /certs/wildcard.crt
@@ -26,6 +28,9 @@ configs:
   file2:
     file: ${WORKSPACE}/configs/${MICROSERVICE}/file2
     name: file2-${file2_DIGEST}
+  file3:
+    file: ${WORKSPACE}/configs/${TEMPLATE}/file3
+    name: file3-${file3_DIGEST}
 secrets:
   cert_com:
     file: ${WORKSPACE}/secrets-prod/certs/wildcard.crt

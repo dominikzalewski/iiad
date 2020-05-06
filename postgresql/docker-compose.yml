@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  postgresql:
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: ${MEMORY}
+    image: ${REGISTRY}postgres:${VERSION}
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    configs:
+      - source: postgresql_conf
+        target: /etc/postgresql/postgresql.conf
+      - source: postgresql_env_conf
+        target: /etc/postgresql/postgresql-env.conf
+      - source: pg_hba_conf
+        target: /etc/postgresql/pg_hba.conf
+    secrets:
+      - source: postgres_passwd
+        target: /etc/postgresql/postgres.passwd
+    environment:
+      - PGDATA=/data
+      - POSTGRES_PASSWORD_FILE=/etc/postgresql/postgres.passwd
+    ports:
+      - published: $PORT
+        target: 5432
+    volumes:
+      - data:/data
+
+volumes:
+  data:
+configs:
+  postgresql_conf:
+    file: ${WORKSPACE}/configs/defaults/${TEMPLATE}/postgresql.conf
+    name: postgresql_conf-${postgresql_conf_DIGEST}
+  postgresql_env_conf:
+    file: ${WORKSPACE}/configs/${ENV}/${MICROSERVICE}/postgresql-env.conf
+    name: postgresql_env_conf-${postgresql_env_conf_DIGEST}
+  pg_hba_conf:
+    file: ${WORKSPACE}/configs/defaults/${TEMPLATE}/pg_hba.conf
+    name: pg_hba_conf-${pg_hba_conf_DIGEST}
+secrets:
+  postgres_passwd:
+    file: ${WORKSPACE}/secrets/${ENV}/${MICROSERVICE}/postgres.passwd
+    name: postgres_passwd-${postgres_passwd_DIGEST}

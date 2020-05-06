@@ -44,14 +44,19 @@ function defaults() {
 	[ -z "$MICROSERVICE" ] && die "MICROSERVICE parameter is required"
 	[ -z "$ENV" ] && die "ENV parameter is required"
 	[ -z "$WORKSPACE" ] && WORKSPACE=../..
-	[ -z "$COMPOSE" ] && COMPOSE="$WORKSPACE/iiad/$MICROSERVICE/docker-compose.yml"
-	[ -z "$TEMPLATE" ] && TEMPLATE="$MICROSERVICE"
 	[ -z "$CONTEXT" ] && CONTEXT=default
+}
+
+function computed_defaults() {
+	[ -z "$TEMPLATE" ] && TEMPLATE="$MICROSERVICE"
+	[ -z "$COMPOSE" ] && COMPOSE="$WORKSPACE/iiad/$TEMPLATE/docker-compose.yml"
+	[ -f "$COMPOSE" ] || COMPOSE="$WORKSPACE/docker/$TEMPLATE/docker-compose.yml"
 }
 
 parse_opts "$@"
 defaults
 source "$WORKSPACE/context/$MICROSERVICE.$ENV"
+computed_defaults
 
 export MICROSERVICE
 export ENV
@@ -60,6 +65,7 @@ export MEMORY
 export VERSION
 export REGISTRY
 export PORT
+export TEMPLATE
 
 CONFIG=$(mktemp)
 config_fingerprint "$COMPOSE" "$MICROSERVICE" "$ENV" "$TEMPLATE" "$WORKSPACE" > "$CONFIG"
