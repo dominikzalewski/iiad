@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  server:
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 50MB
+    image: registry:2.7.1
+    environment:
+      "REGISTRY_AUTH": htpasswd
+      "REGISTRY_AUTH_HTPASSWD_REALM": Registry
+      "REGISTRY_AUTH_HTPASSWD_PATH": /passwd
+      "REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY": /data
+      "REGISTRY_HTTP_TLS_CERTIFICATE": /fullchain.pem
+      "REGISTRY_HTTP_TLS_KEY": /privkey.pem
+    secrets:
+      - source: passwd
+        target: /passwd
+      - source: fullchain
+        target: /fullchain.pem
+      - source: privkey
+        target: /privkey.pem
+    volumes:
+      - data:/data
+    ports:
+      - published: 443
+        target: 5000
+
+volumes:
+  data:
+
+configs:
+  empty:
+    file: ${WORKSPACE}/configs/defaults/empty
+    name: empty-${empty_DIGEST}
+secrets:
+  passwd:
+    file: ${WORKSPACE}/secrets-prod/${ENV}/${MICROSERVICE}/passwd
+    name: passwd-${passwd_DIGEST}
+  fullchain:
+    file: ${WORKSPACE}/secrets-prod/defaults/fullchain1.pem
+    name: fullchain-${fullchain_DIGEST}
+  privkey:
+    file: ${WORKSPACE}/secrets-prod/defaults/privkey1.pem
+    name: privkey-${privkey_DIGEST}
